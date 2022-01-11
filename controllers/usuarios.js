@@ -24,7 +24,6 @@ const crearUsuario = async( req = request, res = response ) => {
     await usuario.save();
 
     res.json({
-        msg: 'post Api -Usuarios Post',
         usuario
     });
 }
