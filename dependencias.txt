@@ -1,0 +1,11 @@
+express: npm i express
+
+dotenv: npm i dotenv
+
+cors: npm i cors
+
+mongoose: npm i mongoose
+
+bcryotjs: npm i bcryptjs
+
+express-validator: npm i express-validator
