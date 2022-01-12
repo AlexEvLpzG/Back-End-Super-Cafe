@@ -54,8 +54,20 @@ const obtenerUsuarios = async( req = request, res = response ) => {
     });
 }
 
+const eliminarUsuario = async( req = request, res = response ) => {
+    const { id } = req.params;
+
+    // Todo eliminarlo fisicamente
+    // const usuario = await Usuario.findByIdAndDelete( id );
+
+    const usuario = await Usuario.findByIdAndUpdate( id, { estado: false });
+
+    res.json( usuario );
+}
+
 module.exports = {
     crearUsuario,
     actualizarUsuario,
-    obtenerUsuarios
+    obtenerUsuarios,
+    eliminarUsuario
 }
