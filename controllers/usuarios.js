@@ -21,7 +21,7 @@ const crearUsuario = async( req = request, res = response ) => {
 
 const actualizarUsuario = async( req = request, res = response ) => {
     const { id } = req.params;
-    const { password, google, correo,...resto } = req.body;
+    const { _id, password, google, correo, ...resto } = req.body;
 
     // Todo: Validar contra la base de datos
     if( password ) {
