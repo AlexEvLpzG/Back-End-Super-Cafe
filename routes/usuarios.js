@@ -4,7 +4,7 @@ const { check } = require( 'express-validator' );
 const { esRoleValido, emailExiste } = require('../helpers/db-validators');
 const { validarCampos } = require('../middlewares/validar-campos');
 
-const { crearUsuario } = require('../controllers/usuarios');
+const { crearUsuario, actualizarUsuario } = require('../controllers/usuarios');
 
 const router = Router();
 
@@ -21,9 +21,9 @@ router.post( '/',
     crearUsuario 
 );
 
-router.get( '/'  );
+router.put( '/:id', actualizarUsuario );
 
-router.put( '/:id'  );
+router.get( '/'  );
 
 router.delete( '/' );
 
