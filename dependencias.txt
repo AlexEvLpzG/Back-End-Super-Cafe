@@ -9,3 +9,5 @@ mongoose: npm i mongoose
 bcryotjs: npm i bcryptjs
 
 express-validator: npm i express-validator
+
+json web token: npm i jsonwebtoken
