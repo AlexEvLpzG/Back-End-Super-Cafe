@@ -54,11 +54,38 @@ const googleSignIn = async( req = request, res = response  ) => {
     const { id_token } = req.body;
 
     try {
-        const googleUser = await googleVerify( id_token );
+        // * Verificar si el email existe
+        const { correo, nombre, img } = await googleVerify( id_token );
+
+        let usuario = await Usuario.findOne({ correo });
+
+        if( !usuario ) {
+            // * Tengo que crearlo
+            const data = {
+                nombre,
+                correo,
+                password: 'password_for_google',
+                img,
+                google: true
+            };
+
+            usuario = new Usuario( data );
+            await usuario.save();
+        }
+
+        // * Si el usuario en DB esta en false
+        if( !usuario.estado ) {
+            return res.status(401).json({
+                msg: 'Hable con el administrador, usuario bloqueado'
+            });
+        }
+
+        // Todo: Generar el JWT
+        const token = await generarJWT( usuario.id );
 
         res.json({
-            msg: 'GoogleSing-In ok',
-            googleUser
+            usuario,
+            token
         });
     } catch ( error ) {
         res.status(400).json({
