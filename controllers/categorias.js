@@ -1,4 +1,5 @@
 const { response } = require( 'express' );
+const { status } = require('express/lib/response');
 const { Categoria } = require( '../models' );
 
 const obtenerCategorias = async( req, res = response ) => {
@@ -60,7 +61,7 @@ const actualizarCategoria = async( req, res = response ) => {
     const { estado, usuario, ...data } = req.body;
 
     data.nombre = data.nombre.toUpperCase();
-    
+
     // * Modifica la información del usuario quien lo modifico
     data.usuario = req.usuario._id;
 
@@ -75,11 +76,24 @@ const actualizarCategoria = async( req, res = response ) => {
     res.status(201).json( categoria );
 }
 
-// Todo: BorrarCategoria - estado : false
+const eliminarCategoria = async( req, res = response ) => {
+    const { id } = req.params;
+
+    let categoria = await Categoria.findById( id );
+    
+    if( !categoria.estado ) {
+        return res.status(400).json({ msg: 'La categoria ya ha sido eliminada' });
+    }
+
+    categoria = await Categoria.findByIdAndUpdate( id, { estado: false }, { new: true });
+
+    res.status(201).json( categoria );
+}
 
 module.exports = {
     crearCategoria,
     obtenerCategorias,
     obtenerCategoria,
-    actualizarCategoria
+    actualizarCategoria,
+    eliminarCategoria
 }
