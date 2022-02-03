@@ -18,6 +18,19 @@ const obtenerCategorias = async( req, res = response ) => {
 } 
 
 // Todo: ObtenerCategoria - populate{}
+const obtenerCategoria = async( req, res = response ) => {
+    const { id } = req.params;
+
+    const categoria = await Categoria.findById( id ).populate( 'usuario', 'nombre' );
+
+    if( !categoria.estado ) {
+        return res.json(400).json({ msg: 'Categoria incorrecta - estado: false' });
+    }
+
+    res.status(201).json({
+        categoria 
+    });
+}
 
 const crearCategoria = async( req, res = response ) => {
     const nombre = req.body.nombre.toUpperCase();
@@ -49,5 +62,6 @@ const crearCategoria = async( req, res = response ) => {
 
 module.exports = {
     crearCategoria,
-    obtenerCategorias
+    obtenerCategorias,
+    obtenerCategoria
 }
