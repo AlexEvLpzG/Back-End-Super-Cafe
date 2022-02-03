@@ -17,7 +17,6 @@ const obtenerCategorias = async( req, res = response ) => {
     });
 } 
 
-// Todo: ObtenerCategoria - populate{}
 const obtenerCategoria = async( req, res = response ) => {
     const { id } = req.params;
 
@@ -42,7 +41,7 @@ const crearCategoria = async( req, res = response ) => {
         });
     }
 
-    // Todo: Generar la daya a guardar
+    // Todo: Generar la data a guardar
     const data = {
         nombre,
         usuario: req.usuario._id
@@ -56,12 +55,31 @@ const crearCategoria = async( req, res = response ) => {
     res.status(201).json( categoria );
 }
 
-// Todo: ActualizarCategoria
+const actualizarCategoria = async( req, res = response ) => {
+    const { id } = req.params;
+    const { estado, usuario, ...data } = req.body;
+
+    data.nombre = data.nombre.toUpperCase();
+    
+    // * Modifica la información del usuario quien lo modifico
+    data.usuario = req.usuario._id;
+
+    let categoria = await Categoria.findOne({ nombre: data.nombre });
+
+    if( categoria ) {
+        return res.status(400).json({ msg: `Error ya existe una categoria con el nombre ${ data.nombre }` });
+    }
+
+    categoria = await Categoria.findByIdAndUpdate( id, data, { new: true });
+    
+    res.status(201).json( categoria );
+}
 
 // Todo: BorrarCategoria - estado : false
 
 module.exports = {
     crearCategoria,
     obtenerCategorias,
-    obtenerCategoria
+    obtenerCategoria,
+    actualizarCategoria
 }
