@@ -18,4 +18,10 @@ const CategoriaSchema = Schema({
     }
 });
 
+// Todo: para quitarlos de la respuestas que hagamos
+CategoriaSchema.methods.toJSON = function() {
+    const { __v, estado, ...categoria } = this.toObject();
+    return categoria;
+}
+
 module.exports = model( 'Categoria', CategoriaSchema );

@@ -1,7 +1,25 @@
 const { response } = require( 'express' );
 const { Categoria } = require( '../models' );
 
-const crearCategoria =  async( req, res = response ) => {
+const obtenerCategorias = async( req, res = response ) => {
+    const { limite = 5, desde = 0 } = req.query;
+    const query = { estado: true };
+
+    const [ total, categorias ] = await Promise.all([
+        Categoria.countDocuments( query ),
+        Categoria.find( query ).populate( 'usuario', 'nombre' )
+            .skip( Number( desde ) ).limit( Number( limite ) )
+    ]);
+
+    res.status(201).json({
+        total,
+        categorias
+    });
+} 
+
+// Todo: ObtenerCategoria - populate{}
+
+const crearCategoria = async( req, res = response ) => {
     const nombre = req.body.nombre.toUpperCase();
     const categoriaDB = await Categoria.findOne({ nombre });
 
@@ -25,6 +43,11 @@ const crearCategoria =  async( req, res = response ) => {
     res.status(201).json( categoria );
 }
 
+// Todo: ActualizarCategoria
+
+// Todo: BorrarCategoria - estado : false
+
 module.exports = {
-    crearCategoria
+    crearCategoria,
+    obtenerCategorias
 }
