@@ -1,8 +1,8 @@
 const { Router } = require( 'express' );
 const { check } = require( 'express-validator' );
-const { crearProducto, obtenerProductos, obtenerProducto, actualizarProducto } = require( '../controllers/productos' );
+const { crearProducto, obtenerProductos, obtenerProducto, actualizarProducto, eliminarProducto } = require( '../controllers/productos' );
 const { exiteCategoriaId, exiteProductoId } = require('../helpers/db-validators');
-const { validarCampos, validarJWT } = require('../middlewares');
+const { validarCampos, validarJWT, esAdminRole } = require('../middlewares');
 
 const router = Router();
 
@@ -38,7 +38,6 @@ router.post( '/',
 router.put( '/:id', 
     [
         validarJWT,
-        check( 'categoria', 'La categoria es invalida' ).isMongoId(),
         check( 'id', 'El ID es incorrecto' ).isMongoId(),
         check( 'id' ).custom( exiteProductoId ),
         validarCampos
@@ -46,12 +45,14 @@ router.put( '/:id',
 );
 
 // ? Borrar productos - Solo con permiso de administrador
-router.delete( '/:id', ( req, res ) => {
-    const { id } = req.params;
-
-    res.json({
-        msg: `El producto con el id: ${ id }, ha sido desactivado`
-    });
-});
+router.delete( '/:id', 
+    [
+        validarJWT,
+        esAdminRole,
+        check( 'id', 'No es un ID válido' ).isMongoId(),
+        check( 'id' ).custom( exiteProductoId ),
+        validarCampos
+    ], eliminarProducto
+);
 
 module.exports = router;

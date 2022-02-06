@@ -7,7 +7,7 @@ const obtenerProductos = async( req, res = response ) => {
     
     const [ total, productos ] = await Promise.all([
         Producto.countDocuments( query ),
-        Producto.find( query ).populate( 'usuario', 'nombre' )
+        Producto.find( query ).populate( 'usuario', 'nombre' ).populate( 'categoria', 'nombre' )
             .skip( Number( desde ) ).limit( Number( limite ) )
     ]);
 
@@ -20,7 +20,9 @@ const obtenerProductos = async( req, res = response ) => {
 const obtenerProducto = async( req, res ) => {
     const { id } = req.params;
 
-    const productoDB = await Producto.findById( id ).populate( 'usuario', 'nombre' );
+    const productoDB = await Producto.findById( id )
+                                        .populate( 'usuario', 'nombre' )
+                                        .populate( 'categoria', 'nombre' );
 
     if( !productoDB.estado ) {
         return res.status(400).json({ msg: 'Producto incorrecta - estado: false' })
@@ -78,9 +80,24 @@ const actualizarProducto = async( req, res ) => {
     res.status(201).json( producto );
 }
 
+const eliminarProducto = async( req, res ) => {
+    const { id } = req.params;
+
+    const productoDB = await Producto.findById( id );
+    
+    if( !productoDB.estado ) {
+        return res.status(400).json({ msg: 'El Producto ya ha sido eliminada' });
+    }
+
+    const producto = await Producto.findByIdAndUpdate( id, { estado: false }, { new: true });
+
+    res.status(201).json( producto );
+}
+
 module.exports = {
     obtenerProductos,
     obtenerProducto,
     crearProducto,
-    actualizarProducto
+    actualizarProducto,
+    eliminarProducto
 }
