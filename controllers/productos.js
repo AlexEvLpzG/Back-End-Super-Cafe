@@ -32,6 +32,8 @@ const obtenerProducto = async( req, res ) => {
 const crearProducto = async( req, res = response ) => {
     const { estado, usuario, ...body } = req.body;
 
+    body.nombre = body.nombre.toUpperCase();
+
     let producto = await Producto.findOne({ nombre: body.nombre });
 
     if( producto ) {
@@ -41,7 +43,7 @@ const crearProducto = async( req, res = response ) => {
     }
 
     const data = {
-        nombre: body.nombre.toUpperCase(),
+        nombre: body.nombre,
         usuario: req.usuario._id,
         ...body
     }
@@ -54,9 +56,31 @@ const crearProducto = async( req, res = response ) => {
     res.status(201).json( producto );
 }
 
+const actualizarProducto = async( req, res ) => {
+    const { id } = req.params;
+    const { estado, usuario, ...data } = req.body;
+
+    if( data.nombre ) {
+        data.nombre = data.nombre.toUpperCase();
+    }
+
+    // * Modifica la información del usuario quien lo modifico
+    data.usuario = req.usuario._id;
+
+    let productoDB = await Producto.findOne({ nombre: data.nombre });
+
+    if( productoDB ) {
+        return res.status(400).json({ msg: `El Producto con el nombre:"${ productoDB.nombre }" ya existe` });
+    } 
+
+    const producto = await Producto.findByIdAndUpdate( id, data, { new: true });
+
+    res.status(201).json( producto );
+}
 
 module.exports = {
     obtenerProductos,
     obtenerProducto,
     crearProducto,
+    actualizarProducto
 }

@@ -1,6 +1,6 @@
 const { Router } = require( 'express' );
 const { check } = require( 'express-validator' );
-const { crearProducto, obtenerProductos, obtenerProducto } = require( '../controllers/productos' );
+const { crearProducto, obtenerProductos, obtenerProducto, actualizarProducto } = require( '../controllers/productos' );
 const { exiteCategoriaId, exiteProductoId } = require('../helpers/db-validators');
 const { validarCampos, validarJWT } = require('../middlewares');
 
@@ -35,12 +35,15 @@ router.post( '/',
 );
 
 // ? Actualizar productos - Privado - Cualquiera con un token válido
-router.put( '/:id', ( req, res ) => {
-    const { id } = req.params;
-    res.json({
-        msg: `Modificando el producto con el id: ${ id }`
-    });
-});
+router.put( '/:id', 
+    [
+        validarJWT,
+        check( 'categoria', 'La categoria es invalida' ).isMongoId(),
+        check( 'id', 'El ID es incorrecto' ).isMongoId(),
+        check( 'id' ).custom( exiteProductoId ),
+        validarCampos
+    ], actualizarProducto
+);
 
 // ? Borrar productos - Solo con permiso de administrador
 router.delete( '/:id', ( req, res ) => {
