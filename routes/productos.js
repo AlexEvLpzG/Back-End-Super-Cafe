@@ -1,6 +1,6 @@
 const { Router } = require( 'express' );
 const { check } = require( 'express-validator' );
-const { crearProducto } = require( '../controllers/productos' );
+const { crearProducto, obtenerProductos } = require( '../controllers/productos' );
 const { exiteCategoriaId } = require('../helpers/db-validators');
 const { validarCampos, validarJWT } = require('../middlewares');
 
@@ -12,11 +12,7 @@ const router = Router();
 */
 
 // ? Obtener todas las productos - public
-router.get( '/', ( req, res ) => {
-    res.json({
-        msg: 'Obteniendo productos'
-    });
-});
+router.get( '/', obtenerProductos );
 
 // ? Obtener productos por el id - publico
 router.get( '/:id', ( req, res ) => {
