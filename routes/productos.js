@@ -1,4 +1,8 @@
 const { Router } = require( 'express' );
+const { check } = require( 'express-validator' );
+const { crearProducto } = require( '../controllers/productos' );
+const { exiteCategoriaId } = require('../helpers/db-validators');
+const { validarCampos, validarJWT } = require('../middlewares');
 
 const router = Router();
 
@@ -24,11 +28,15 @@ router.get( '/:id', ( req, res ) => {
 });
 
 // ? Crear productos - Privado - Cualquiera con un token válido
-router.post( '/', ( req, res ) => {
-    res.json({
-        msg: 'Creando producto'
-    });
-});
+router.post( '/', 
+    [
+        validarJWT,
+        check( 'nombre', 'El nombre es obligatorio' ).not().isEmpty(),
+        check( 'categoria', 'La categoria es invalida' ).isMongoId(),
+        check( 'categoria' ).custom( exiteCategoriaId ),
+        validarCampos,
+    ], crearProducto
+);
 
 // ? Actualizar productos - Privado - Cualquiera con un token válido
 router.put( '/:id', ( req, res ) => {
