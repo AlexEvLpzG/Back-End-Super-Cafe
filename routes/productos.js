@@ -1,7 +1,7 @@
 const { Router } = require( 'express' );
 const { check } = require( 'express-validator' );
-const { crearProducto, obtenerProductos } = require( '../controllers/productos' );
-const { exiteCategoriaId } = require('../helpers/db-validators');
+const { crearProducto, obtenerProductos, obtenerProducto } = require( '../controllers/productos' );
+const { exiteCategoriaId, exiteProductoId } = require('../helpers/db-validators');
 const { validarCampos, validarJWT } = require('../middlewares');
 
 const router = Router();
@@ -15,13 +15,13 @@ const router = Router();
 router.get( '/', obtenerProductos );
 
 // ? Obtener productos por el id - publico
-router.get( '/:id', ( req, res ) => {
-    const { id } = req.params;
-    
-    res.json({
-        msg: `Obteniendo el producto con el id: ${ id }`
-    });
-});
+router.get( '/:id', 
+    [
+        check( 'id', 'El ID es incorrecta' ).isMongoId(),
+        check( 'id' ).custom( exiteProductoId ),
+        validarCampos
+    ], obtenerProducto
+);
 
 // ? Crear productos - Privado - Cualquiera con un token válido
 router.post( '/', 

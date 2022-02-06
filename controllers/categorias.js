@@ -27,9 +27,7 @@ const obtenerCategoria = async( req, res = response ) => {
         return res.json(400).json({ msg: 'Categoria incorrecta - estado: false' });
     }
 
-    res.status(201).json({
-        categoria 
-    });
+    res.status(201).json( categoria );
 }
 
 const crearCategoria = async( req, res = response ) => {

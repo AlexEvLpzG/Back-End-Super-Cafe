@@ -17,6 +17,18 @@ const obtenerProductos = async( req, res = response ) => {
     });
 }
 
+const obtenerProducto = async( req, res ) => {
+    const { id } = req.params;
+
+    const productoDB = await Producto.findById( id ).populate( 'usuario', 'nombre' );
+
+    if( !productoDB.estado ) {
+        return res.status(400).json({ msg: 'Producto incorrecta - estado: false' })
+    }
+
+    res.status(201).json( productoDB );
+}
+
 const crearProducto = async( req, res = response ) => {
     const { estado, usuario, ...body } = req.body;
 
@@ -45,5 +57,6 @@ const crearProducto = async( req, res = response ) => {
 
 module.exports = {
     obtenerProductos,
-    crearProducto
+    obtenerProducto,
+    crearProducto,
 }
