@@ -1,7 +1,7 @@
 const { response } = require( 'express' );
 const { ObjectId } = require( 'mongoose' ).Types;
 
-const { Usuario } = require( '../models' );
+const { Categoria ,Usuario } = require( '../models' );
 
 const coleccioneaPermitidas = [
     'usuarios',
@@ -31,6 +31,23 @@ const buscarUsarios = async( termino = '', res = response ) => {
     });
 }
 
+const buscarCategorias = async( termino = '', res = response ) => {
+    const esMongoID = ObjectId.isValid( termino );
+
+    if( esMongoID ) {
+        const categoria = await Categoria.findById( termino );
+        return res.status(201).json({
+            results: ( categoria) ? [ categoria ] : []
+        });
+    }
+
+    const regex = new RegExp( termino, 'i' );
+    const categorias = await Categoria.find({ nombre: regex, estado: true });
+
+    res.status( 201 ).json({
+        results: categorias
+    })
+}
 const buscar = ( req, res = response ) => {
     const { coleccion, termino } = req.params;
 
@@ -45,6 +62,7 @@ const buscar = ( req, res = response ) => {
             buscarUsarios( termino, res );
             break;
         case 'categorias':
+            buscarCategorias( termino, res );
             break;
         case 'productos':
             break;
