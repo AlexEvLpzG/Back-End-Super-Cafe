@@ -13,3 +13,5 @@ express-validator: npm i express-validator
 json web token: npm i jsonwebtoken
 
 google-auth-library: npm install google-auth-library --save
+
+express-fileupload: npm i express-fileupload
