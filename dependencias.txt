@@ -17,3 +17,5 @@ google-auth-library: npm install google-auth-library --save
 express-fileupload: npm i express-fileupload
 
 uuid = npm i uuid 
+
+cloudinary = npm i cloudinary
